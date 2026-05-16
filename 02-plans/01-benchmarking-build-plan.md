@@ -92,6 +92,7 @@ benchmark/
 - **저장소/버전 관리**
   - 원본 데이터: Git LFS 또는 S3/객체 저장소(`s3://cw-benchmark-data/v1/`).
   - 결과물: `/reports/`는 Git 관리하되, 대용량 로그는 외부 스토리지 경로만 명시.
+  - **용량 계획:** POC 단계 0.2GB, MVP 5GB, 장기(>3개월) 20GB 예상. S3 Standard 기준 월 $0.023/GB → 20GB ≈ $0.46/월.
 - **비밀/토큰 관리**
   - `.env.example` 제공, 실제 키는 1Password/Secrets Manager에서 주입.
   - GitHub Actions에서는 OpenAI/Anthropic 키를 `ORG_BENCH_*` prefix로 관리.
@@ -102,6 +103,24 @@ benchmark/
   - 예상 API 비용: POC < $30, MVP 2주 동안 $300~$500 (LLM 호출량 기준).
   - 컴퓨트: 로컬 CPU 16core + 32GB RAM, 필요 시 클라우드 GPU (A10G) 1대 임대.
 - **모니터링/알림**
+
+### 8.1 인프라 사양/비용 추정
+| 목적 | 사양 | 시간/주기 | 단가(USD) | 추정 비용 |
+| --- | --- | --- | --- | --- |
+| PoC 실행 (로컬) | Apple Silicon (M3 Pro 12c CPU, 18c GPU), 32GB RAM | 10시간 | sunk cost | 0 |
+| 모델 평가 (클라우드) | NVIDIA A10G 24GB GPU, 8vCPU, 45GB RAM (GCP A2 High-GPU) | 20시간/주 | ~$1.46/시간 | ~$116/월 |
+| 대규모 회귀 테스트 | NVIDIA A100 40GB, 12vCPU, 85GB RAM (AWS p4d.24xlarge spot) | 5시간/분기 | ~$3.06/시간(spot) | ~$15/분기 |
+| 로그/데이터 저장 | S3 Standard 20GB + Glacier Deep Archive 백업 | 상시 | $0.023/GB + $0.00099/GB | ~$0.50/월 |
+| CI 파이프라인 | GitHub Actions Ubuntu runner + 캐시 10GB | 빌드당 10분 | 포함 (Pro 플랜) | 0 |
+| 모니터링/알림 | CloudWatch Events + Slack Webhook | 상시 | $1/백만 이벤트 | <$1/월 |
+
+- **GPU 선택 기준:**
+  - POC는 API 기반 모델만 호출하므로 GPU 불필요.
+  - 로컬/오픈소스 모델 비교가 필요하면 A10G(24GB)로 충분. 대규모 컨텍스트 모델은 A100 40GB 이상 필요.
+  - 예산 제한 시 RunPod/AWS Spot 사용 고려.
+- **API 비용 산정 근거:** GPT-4o Mini 기준 $0.15/1M input tokens, $0.60/1M output tokens. 세션당 4K 토큰 사용 시 10,000세션 → 약 $30.
+  - Claude 3.5 Sonnet($3/1M input, $15/1M output)을 사용할 경우 동일 사용량에서 $180 수준.
+- **스토리지 I/O:** JSONL 파일은 저빈도 접근이므로 Standard-Infrequent Access로 전환 시 ~40% 절감. Parquet 변환 시 query 비용 감소.
   - cron 기반 야간 벤치마크 시 Slack/Webhook 알림 구성.
   - 실패 리포트 자동 첨부.
 
