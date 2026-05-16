@@ -33,4 +33,4 @@ python evaluation/run_poc.py data/sample_sessions.jsonl --threshold 0.6
 - `benchmark/detectors/`에 오류 유형별 모듈을 추가합니다. (예: `reasoning.py`, `tool_failure.py`, `handoff.py`).
 - 각 모듈은 공통 `DetectionResult` 데이터클래스를 사용해 일관된 인터페이스를 유지합니다.
 
-이 구조는 `02-plans/01-benchmarking-build-plan.md`에 명시된 파이프라인(데이터 → 스크립트 → 모델 → 탐지기 → 평가)을 그대로 따르며, 각 모듈을 독립적으로 교체하거나 확장할 수 있도록 설계되었습니다.
+이 구조는 `research/plans/01-benchmarking-build-plan.md`에 명시된 파이프라인(데이터 → 스크립트 → 모델 → 탐지기 → 평가)을 그대로 따르며, 각 모듈을 독립적으로 교체하거나 확장할 수 있도록 설계되었습니다.

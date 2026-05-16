@@ -22,16 +22,16 @@
 ## 3. 단계별 계획
 | 단계 | 기간(예상) | 주요 작업 | 산출물 |
 | --- | --- | --- | --- |
-| 0. 셋업 | Day 0 | 리포 구조 정리(01-research, 02-plans, 03-prototypes), 의존성 목록화 | 구조 리포트, requirements 초안 |
+| 0. 셋업 | Day 0 | 리포 구조 정리(research, research/plans, runs), 의존성 목록화 | 구조 리포트, requirements 초안 |
 | 1. 데이터 수집/정의 | Day 0-1 | HaluEval/SHROOM/ToolBench 등 스키마 통합, handoff synthetic 템플릿 설계 | `/data/{domain}/schema.yaml`, 템플릿 JSON |
 | 2. 파이프라인 설계 | Day 1 | 세션 생성(`generate_sessions.py`), 에러 주입 규칙, 로그 스키마 문서화 | `/scripts/README.md`, `/docs/log_schema.md` |
 | 3. 탐지기/평가기 | Day 1-2 | 오류 패밀리별 detector 인터페이스, 지표(F1, Error Discovery Rate, KPI 위반율 등) 구현 | `/detectors/*.py`, `/evaluation/run_benchmark.py` |
 | 4. 모델 어댑터 계층 | Day 2 | REST/OpenAI, Anthropic, 로컬 모델 호출 모듈 + 공통 trace 수집 | `/models/{provider}/adapter.py` |
-| 5. PoC 실행 | Day 2 | samples/manual_sessions.jsonl + GPT-4o adapter로 end-to-end 평가, 리포트 생성 | `/03-prototypes/poc-run-YYYYMMDD/` |
+| 5. PoC 실행 | Day 2 | samples/manual_sessions.jsonl + GPT-4o adapter로 end-to-end 평가, 리포트 생성 | `/runs/poc-run-YYYYMMDD/` |
 | 6. 문서화 & 배포 | Day 2 | README, runbook, GitHub Actions 초안 | `/README.md`, `/docs/*` |
 
 ## 4. 데이터셋 전략
-- **기성 데이터:** 01-research/..., 02-survey 참고.
+- **기성 데이터:** `research/surveys/` 이하 자료 참고.
 - **부족 영역:** handoff/조정 로그.
   - 합성 전략: LangGraph + OpenTelemetry instrumentation, slot-based context diff, 성공/실패 변형 100세트.
   - 라벨링 기준: `handoff_context_loss`, `handoff_timeout`, `handoff_conflict` 등.
@@ -74,7 +74,7 @@ benchmark/
 - **구성 가능성:** `config/benchmark.yaml`에서 사용할 데이터셋, 모델, 지표를 선언.
 
 ## 6. PoC / Prototype 고려 사항
-- `03-prototypes/` 하위에 날짜별 폴더 생성 (예: `03-prototypes/2026-05-17-poc-gpt4o/`).
+- `runs/` 하위에 날짜별 폴더 생성 (예: `runs/2026-05-17-poc-gpt4o/`).
 - PoC 구성 요소: 소형 데이터(10 세션), 단일 모델 어댑터, CLI 실행 스크립트.
 - CI: GitHub Actions로 lint+smoke test만.
 
@@ -127,7 +127,7 @@ benchmark/
 ## 9. 다음 액션
 1. 데이터 스키마 문서화 (`docs/log_schema.md`).
 2. `scripts/generate_sessions.py` 초기 버전 작성.
-3. PoC용 `03-prototypes/2026-05-xx` 디렉터리 생성 및 README 초안.
+3. PoC용 `runs/2026-05-xx` 디렉터리 생성 및 README 초안.
 
 ## 10. 실제 진행 시 체크포인트
 - **거버넌스**: 데이터셋/리포트가 외부 공유 가능한지 보안/법무 승인 절차 명시.
