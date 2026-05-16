@@ -1,0 +1,5 @@
+sess-001: OK (confidence=0.17, score=0.83)
+sess-002: FLAG (confidence=0.62, score=0.38)
+sess-003: FLAG (confidence=0.50, score=0.50)
+Processed 3 sessions; flagged=2
+Report saved to ../runs/2026-05-17-0548-hallucination-echo/report.json

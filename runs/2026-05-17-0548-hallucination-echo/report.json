@@ -1,0 +1,43 @@
+{
+  "summary": {
+    "total_sessions": 3,
+    "flagged": 2,
+    "adapter": "models.base_adapter:EchoAdapter",
+    "detector": "detectors.hallucination:SimpleHallucinationDetector",
+    "dataset": "data/sample_sessions.jsonl",
+    "dataset_metadata": "benchmark/data/metadata.sample.yaml",
+    "methodology": "benchmark/methodology/README.md#1-환각-탐지-hallucination",
+    "metrics": [
+      "token_overlap"
+    ]
+  },
+  "detections": [
+    {
+      "session_id": "sess-001",
+      "is_flagged": false,
+      "confidence": 0.16666666666666663,
+      "details": {
+        "score": "0.83"
+      },
+      "metric": "token_overlap"
+    },
+    {
+      "session_id": "sess-002",
+      "is_flagged": true,
+      "confidence": 0.625,
+      "details": {
+        "score": "0.38"
+      },
+      "metric": "token_overlap"
+    },
+    {
+      "session_id": "sess-003",
+      "is_flagged": true,
+      "confidence": 0.5,
+      "details": {
+        "score": "0.50"
+      },
+      "metric": "token_overlap"
+    }
+  ]
+}

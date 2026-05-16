@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "total_sessions": 2,
+    "flagged": 1,
+    "adapter": "models.base_adapter:EchoAdapter",
+    "detector": "detectors.tool_failure:ToolFailureDetector",
+    "dataset": "data/tool_failure_sample.jsonl",
+    "dataset_metadata": "benchmark/data/tool_failure_sample.yaml",
+    "methodology": "benchmark/methodology/README.md#3-도구-사용-실패-tool-failures",
+    "metrics": [
+      "tool_failure_count"
+    ]
+  },
+  "detections": [
+    {
+      "session_id": "tf-001",
+      "is_flagged": false,
+      "confidence": 0.0,
+      "details": {
+        "total_calls": "2",
+        "failures": "0"
+      },
+      "metric": "tool_failure_count"
+    },
+    {
+      "session_id": "tf-002",
+      "is_flagged": true,
+      "confidence": 1.0,
+      "details": {
+        "total_calls": "2",
+        "failures": "1"
+      },
+      "metric": "tool_failure_count"
+    }
+  ]
+}

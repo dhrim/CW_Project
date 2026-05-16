@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "total_sessions": 2,
+    "flagged": 1,
+    "adapter": "models.base_adapter:EchoAdapter",
+    "detector": "detectors.reasoning:ReasoningConsistencyDetector",
+    "dataset": "data/reasoning_sample.jsonl",
+    "dataset_metadata": "benchmark/data/reasoning_sample.yaml",
+    "methodology": "benchmark/methodology/README.md#2-추론-오류-reasoning-errors",
+    "metrics": [
+      "constraint_coverage"
+    ]
+  },
+  "detections": [
+    {
+      "session_id": "rs-001",
+      "is_flagged": false,
+      "confidence": 0.0,
+      "details": {
+        "required": "add_pasta, boil_water, drain",
+        "missing": "-"
+      },
+      "metric": "constraint_coverage"
+    },
+    {
+      "session_id": "rs-002",
+      "is_flagged": true,
+      "confidence": 1.0,
+      "details": {
+        "required": "reproduce_bug, assign_owner, set_priority",
+        "missing": "set_priority"
+      },
+      "metric": "constraint_coverage"
+    }
+  ]
+}
