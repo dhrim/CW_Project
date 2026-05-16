@@ -1,0 +1,9 @@
+{
+  "dataset": "data/sample_sessions.jsonl",
+  "adapter": "models.base_adapter:EchoAdapter",
+  "detector": "detectors.hallucination:SimpleHallucinationDetector",
+  "detector_config": {"threshold": 0.6},
+  "dataset_meta": "benchmark/data/metadata.sample.yaml",
+  "methodology": "benchmark/methodology/README.md#1-환각-탐지-hallucination",
+  "report": "../runs/your-run-id/report.json"
+}

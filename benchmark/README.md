@@ -20,8 +20,15 @@ python evaluation/run_benchmark.py data/sample_sessions.jsonl \
   --detector-config '{"threshold": 0.6}' \
   --dataset-meta benchmark/data/metadata.sample.yaml \
   --methodology benchmark/methodology/README.md#1-환각-탐지-hallucination \
-  --report ../runs/2026-05-17-hallucination-run/report.json
+  --report ../runs/demo/report.json
 ```
+
+### 설정 파일 사용
+```bash
+cd benchmark
+python evaluation/run_benchmark.py --config configs/echo_hallucination.json
+```
+- `benchmark/configs/echo_hallucination.json`을 복사해 경로/출력만 바꾸면 긴 CLI 옵션을 반복할 필요가 없습니다.
 
 ### 주요 옵션
 | 옵션 | 설명 |
@@ -31,8 +38,9 @@ python evaluation/run_benchmark.py data/sample_sessions.jsonl \
 | `--detector module:Class` | 탐지기 클래스 지정 (환각/추론/도구 등). |
 | `--detector-config '{...}'` | 탐지기 설정(예: threshold, metric 토글). |
 | `--report path.json` | 실행 결과(요약+세션별 판정)를 JSON으로 저장. |
-| `--dataset-meta path` | 데이터셋 메타데이터(YAML/URL) 경로.
+| `--dataset-meta path` | 데이터셋 메타데이터(YAML/URL) 경로. |
 | `--methodology ref` | 사용한 벤치마킹 방법/메트릭 문서 링크. |
+| `--config path` | JSON 설정 파일(옵션/경로 일괄 지정). CLI 인자보다 우선합니다. |
 
 ## 데이터셋 추가 가이드
 - `benchmark/data/README.md`에 스키마/절차가 정리되어 있습니다.

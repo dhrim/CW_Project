@@ -34,6 +34,18 @@ def parse_json_arg(value: str | None) -> Dict[str, Any]:
     return json.loads(value)
 
 
+def load_config_file(path: Path | None) -> Dict[str, Any]:
+    if not path:
+        return {}
+    return json.loads(path.read_text())
+
+
+def ensure_path(value: str | None, fallback: Path | None = None) -> Path | None:
+    if value:
+        return Path(value)
+    return fallback
+
+
 def main(
     data_path: Path,
     adapter_path: str,
@@ -94,7 +106,12 @@ def main(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generic benchmark runner")
-    parser.add_argument("data_path", type=Path, help="JSONL dataset path")
+    parser.add_argument("data_path", nargs="?", type=Path, help="JSONL dataset path (optional when using --config)")
+    parser.add_argument(
+        "--config",
+        type=Path,
+        help="JSON config file containing dataset/adapter/detector/etc.",
+    )
     parser.add_argument(
         "--adapter",
         default="models.base_adapter:EchoAdapter",
@@ -131,13 +148,38 @@ if __name__ == "__main__":
         help="Reference link/file describing benchmark method",
     )
     args = parser.parse_args()
+    config = load_config_file(args.config)
+
+    data_path = ensure_path(config.get("dataset"), args.data_path)
+    if not data_path:
+        parser.error("dataset path must be provided either positionally or via --config")
+
+    adapter_path = config.get("adapter", args.adapter)
+    detector_path = config.get("detector", args.detector)
+
+    adapter_cfg = config.get("adapter_config")
+    if adapter_cfg is None:
+        adapter_cfg = parse_json_arg(args.adapter_config)
+    elif isinstance(adapter_cfg, str):
+        adapter_cfg = json.loads(adapter_cfg)
+
+    detector_cfg = config.get("detector_config")
+    if detector_cfg is None:
+        detector_cfg = parse_json_arg(args.detector_config)
+    elif isinstance(detector_cfg, str):
+        detector_cfg = json.loads(detector_cfg)
+
+    report_path = ensure_path(config.get("report"), args.report)
+    dataset_meta = config.get("dataset_meta", args.dataset_meta)
+    methodology = config.get("methodology", args.methodology)
+
     main(
-        data_path=args.data_path,
-        adapter_path=args.adapter,
-        detector_path=args.detector,
-        adapter_cfg=parse_json_arg(args.adapter_config),
-        detector_cfg=parse_json_arg(args.detector_config),
-        report_path=args.report,
-        dataset_meta=args.dataset_meta,
-        methodology_ref=args.methodology,
+        data_path=data_path,
+        adapter_path=adapter_path,
+        detector_path=detector_path,
+        adapter_cfg=adapter_cfg,
+        detector_cfg=detector_cfg,
+        report_path=report_path,
+        dataset_meta=dataset_meta,
+        methodology_ref=methodology,
     )
