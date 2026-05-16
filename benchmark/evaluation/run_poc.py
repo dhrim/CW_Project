@@ -9,7 +9,7 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 
-from detectors.hallucination_detector import SimpleHallucinationDetector
+from detectors.hallucination import SimpleHallucinationDetector
 from models.base_adapter import EchoAdapter
 
 
@@ -25,9 +25,7 @@ def load_sessions(path: Path) -> Iterable[dict]:
 def main(data_path: Path, threshold: float) -> None:
     adapter = EchoAdapter()
     detector = SimpleHallucinationDetector(threshold=threshold)
-    detections = []
-    total = 0
-    hallucinations = 0
+    total = hallucinations = 0
 
     for session in load_sessions(data_path):
         total += 1
@@ -37,19 +35,19 @@ def main(data_path: Path, threshold: float) -> None:
             reference_facts=session.get("reference_facts", []),
             model_output=response.output,
         )
-        detections.append(result)
+        status = "H" if result.is_hallucination else "OK"
+        print(
+            f"{response.session_id}: {status} "
+            f"(confidence={result.confidence:.2f}, score={result.details['score']})"
+        )
         hallucinations += int(result.is_hallucination)
 
-    print(f"Processed {total} sessions")
-    print(f"Detected hallucinations: {hallucinations}")
-    for item in detections:
-        status = "H" if item.is_hallucination else "OK"
-        print(f"{item.session_id}: {status} (confidence={item.confidence:.2f}, score={item.details['score']})")
+    print(f"Processed {total} sessions; hallucinations={hallucinations}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run hallucination PoC detector")
-    parser.add_argument("data_path", type=Path, help="Path to JSONL session file")
+    parser = argparse.ArgumentParser(description="Run hallucination detector prototype")
+    parser.add_argument("data_path", type=Path)
     parser.add_argument("--threshold", type=float, default=0.6)
     args = parser.parse_args()
     main(args.data_path, threshold=args.threshold)

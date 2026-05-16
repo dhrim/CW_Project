@@ -13,19 +13,17 @@ class DetectionResult:
 
 
 class SimpleHallucinationDetector:
-    """Rule-based detector comparing model assertions to reference facts."""
+    """Rule-based detector comparing tokens with reference facts."""
 
     def __init__(self, threshold: float = 0.5) -> None:
         self.threshold = threshold
 
     def score(self, reference_facts: List[str], model_output: str) -> float:
-        # naive overlap score based on token intersection
         ref_tokens = set(" ".join(reference_facts).lower().split())
         output_tokens = set(model_output.lower().split())
         if not ref_tokens:
             return 0.0
-        overlap = len(ref_tokens & output_tokens) / len(ref_tokens)
-        return overlap
+        return len(ref_tokens & output_tokens) / len(ref_tokens)
 
     def detect(self, session_id: str, reference_facts: List[str], model_output: str) -> DetectionResult:
         score = self.score(reference_facts, model_output)

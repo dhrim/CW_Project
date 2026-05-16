@@ -12,19 +12,18 @@ class ModelResponse:
 
 
 class BaseModelAdapter:
-    """Interface every target model adapter should follow."""
+    """Interface for model-specific adapters."""
 
     def __init__(self, **config: Any) -> None:
         self.config = config
 
     def generate(self, session: Dict[str, Any]) -> ModelResponse:
-        raise NotImplementedError("Adapters must implement generate()")
+        raise NotImplementedError
 
 
 class EchoAdapter(BaseModelAdapter):
-    """Minimal mock adapter for PoC runs."""
+    """Minimal adapter for scaffolding tests."""
 
     def generate(self, session: Dict[str, Any]) -> ModelResponse:
-        # For now, just echo the first assertion or fall back to prompt.
         output = session.get("model_assertions", [session.get("prompt", "")])[0]
         return ModelResponse(session_id=session["session_id"], output=output, raw={"adapter": "echo"})
