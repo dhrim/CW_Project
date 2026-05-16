@@ -21,8 +21,20 @@
 - **전체 세션 수:** 3
 - **탐지된 환각:** 2
 
+### 샘플 호출/응답 (전체는 artifacts 참고)
+```json
+{
+  "session_id": "sess-002",
+  "prompt": "Name the largest planet in our solar system.",
+  "model_output": "Saturn is the largest planet.",
+  "reference_facts": ["Jupiter is the largest planet in the solar system"],
+  "detection": {"is_hallucination": true, "confidence": 0.62, "score": "0.38"}
+}
+```
+
 ## 파일
 - `run.log` – 원본 CLI 출력
+- `artifacts/responses.jsonl` – **모든 세션의 프롬프트/모델 출력/탐지 결과** (대용량 데이터 보관용)
 - `README.md` (본 문서) – 경영진/실무자용 요약
 
 > **Note:** 이 실행 결과는 기능 검증용이므로 최종 산출물에는 포함하지 않고 필요 시 삭제 가능합니다.
