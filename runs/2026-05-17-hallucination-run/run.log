@@ -1,4 +1,4 @@
 sess-001: OK (confidence=0.17, score=0.83)
 sess-002: H (confidence=0.62, score=0.38)
 sess-003: H (confidence=0.50, score=0.50)
-Processed 3 sessions; hallucinations=2
+Processed 3 sessions; flagged=2

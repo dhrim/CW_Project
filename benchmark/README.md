@@ -14,8 +14,25 @@ benchmark/
 ## 실행 예시
 ```bash
 cd benchmark
-python evaluation/run_poc.py data/sample_sessions.jsonl --threshold 0.6
+python evaluation/run_benchmark.py data/sample_sessions.jsonl \
+  --adapter models.base_adapter:EchoAdapter \
+  --detector detectors.hallucination:SimpleHallucinationDetector \
+  --detector-config '{"threshold": 0.6}' \
+  --report ../runs/2026-05-17-hallucination-run/report.json
 ```
+
+### 주요 옵션
+| 옵션 | 설명 |
+| --- | --- |
+| `--adapter module:Class` | 사용할 모델 어댑터 지정. 기본값은 `EchoAdapter`. |
+| `--adapter-config '{...}'` | 어댑터 생성자에 전달할 JSON. API 키, 모델명 등. |
+| `--detector module:Class` | 탐지기 클래스 지정 (환각/추론/도구 등). |
+| `--detector-config '{...}'` | 탐지기 설정(예: threshold, metric 토글). |
+| `--report path.json` | 실행 결과(요약+세션별 판정)를 JSON으로 저장. |
+
+## 데이터셋 추가 가이드
+- `benchmark/data/README.md`에 스키마/절차가 정리되어 있습니다.
+- JSONL 파일만 준비하면 CLI에서 `data_path` 인자로 교체 가능합니다.
 
 ## 모델 어댑터 작성 가이드
 1. `benchmark/models/`에 새 파일을 만들고 `BaseModelAdapter`를 상속합니다.

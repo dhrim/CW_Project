@@ -8,7 +8,9 @@
 - **실행 커맨드:**
   ```bash
   cd benchmark
-  python3 evaluation/run_poc.py data/sample_sessions.jsonl
+  python3 evaluation/run_benchmark.py data/sample_sessions.jsonl \
+    --detector-config '{"threshold": 0.6}' \
+    --report ../runs/2026-05-17-hallucination-run/report.json
   ```
 
 ## 결과 요약
