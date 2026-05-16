@@ -37,6 +37,19 @@
   - 라벨링 기준: `handoff_context_loss`, `handoff_timeout`, `handoff_conflict` 등.
 - **저장 포맷:** `session_id`, `turns[]`, `errors[]`, `metrics[]` JSONL.
 
+### 4.1 데이터 규모 가이드
+| 구분 | 48h POC | 2주 MVP | 비고 |
+| --- | --- | --- | --- |
+| 세션 수 (전체) | 최소 50 세션 (각 오류 유형 10+ 포함) | 500~1,000 세션 (각 오류 유형 균형) | 세션=단일 태스크 수행 로그 |
+| 환각 라벨 | 200 claim 수준 | 2,000 claim 수준 | SHROOM/HaluEval 혼합 + 자체 생성 |
+| 추론 오류/제약 | 30 KPI 시나리오 | 200 KPI 시나리오 | ODCV-Bench 스타일 Mandated/Incentivized |
+| 도구 실패 | 40 ToolBench-style 호출 | 300+ 호출 | ToolEmu/SafeToolBench 샘플 변형 |
+| handoff 실패 | 20 synthetic | 150 synthetic + 실사용 익명 로그 | slot loss, timeout, conflict 최소 각 50 |
+| 저장 용량 | <200MB (JSONL) | 2~5GB (JSONL + 아티팩트) | 장기 보관은 Parquet 변환 고려 |
+
+- **샘플링 정책:** PoC 단계에서는 Balanced sampling, MVP 이후에는 실제 발생률을 반영한 weighted sampling으로 전환.
+- **버전 관리:** `data/releases/v{n}` 태그 + `data/README.md`에 출처/라이선스/생성 스크립트 명시.
+
 ## 5. 파이프라인 아키텍처 제안
 ```
 benchmark/
@@ -72,7 +85,35 @@ benchmark/
 | 모델별 API 변화 | 파이프라인 중단 | adapter 레이어에서 버전 캡슐화, mock adapter 제공 |
 | 탐지기 오탐/과탐 | 지표 신뢰도 저하 | human spot-check 샘플, threshold 튜닝 스크립트 |
 
-## 8. 다음 액션
+## 8. 인프라 & 운영 고려 사항
+- **실행 환경**
+  - PoC: 로컬 Mac + Python 3.11, GPU 불필요.
+  - MVP: 컨테이너 기반 실행(예: Docker + GitHub Actions self-hosted runner) + GPU/TPU 옵션(로컬 모델 평가 시 필요).
+- **저장소/버전 관리**
+  - 원본 데이터: Git LFS 또는 S3/객체 저장소(`s3://cw-benchmark-data/v1/`).
+  - 결과물: `/reports/`는 Git 관리하되, 대용량 로그는 외부 스토리지 경로만 명시.
+- **비밀/토큰 관리**
+  - `.env.example` 제공, 실제 키는 1Password/Secrets Manager에서 주입.
+  - GitHub Actions에서는 OpenAI/Anthropic 키를 `ORG_BENCH_*` prefix로 관리.
+- **실험 추적**
+  - 최소한 run metadata(JSON) 기록: 모델 버전, 프롬프트, 탐지기 커밋 SHA.
+  - 장기적으로 MLflow/W&B 연동 고려.
+- **비용/자원**
+  - 예상 API 비용: POC < $30, MVP 2주 동안 $300~$500 (LLM 호출량 기준).
+  - 컴퓨트: 로컬 CPU 16core + 32GB RAM, 필요 시 클라우드 GPU (A10G) 1대 임대.
+- **모니터링/알림**
+  - cron 기반 야간 벤치마크 시 Slack/Webhook 알림 구성.
+  - 실패 리포트 자동 첨부.
+
+## 9. 다음 액션
 1. 데이터 스키마 문서화 (`docs/log_schema.md`).
 2. `scripts/generate_sessions.py` 초기 버전 작성.
 3. PoC용 `03-prototypes/2026-05-xx` 디렉터리 생성 및 README 초안.
+
+## 10. 실제 진행 시 체크포인트
+- **거버넌스**: 데이터셋/리포트가 외부 공유 가능한지 보안/법무 승인 절차 명시.
+- **QA 프로세스**: 각 릴리즈마다 human review 10% 샘플, 탐지기 로컬 테스트, 회귀 테스트 세트 유지.
+- **리소스 예약**: 장시간 벤치마크 시 API rate limit, GPU 예약 스케줄 사전 확보.
+- **커뮤니케이션**: 주간/일일 스탠드업 시 진행률 보고(현재 10분 간격 알림 준수). 큰 변경 시 CHANGELOG 업데이트.
+- **백업/재현성**: `requirements-lock.txt`, Dockerfile, seed 고정, `make reproduce` 명령으로 동일 결과 재현.
+- **PoC → MVP 게이트**: 데이터 규모 충족, 탐지기 정확도(precision>0.7) 및 리포트 자동화 완료 시 다음 단계로 승격.
