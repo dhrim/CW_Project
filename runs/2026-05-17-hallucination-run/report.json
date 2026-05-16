@@ -3,32 +3,16 @@
     "total_sessions": 3,
     "flagged": 2,
     "adapter": "models.base_adapter:EchoAdapter",
-    "detector": "detectors.hallucination:SimpleHallucinationDetector"
-  },
-  "detections": [
-    {
-      "session_id": "sess-001",
-      "is_hallucination": false,
-      "confidence": 0.16666666666666663,
-      "details": {
-        "score": "0.83"
+    "detector": "detectors.hallucination:SimpleHallucinationDetector",
+    "dataset": "benchmark/data/sample_sessions.jsonl",
+    "dataset_metadata": "benchmark/data/metadata.sample.yaml",
+    "methodology": "benchmark/methodology/README.md#1-환각-탐지-hallucination",
+    "metrics": [
+      {
+        "name": "token_overlap_score",
+        "description": "Token overlap ratio between reference facts and model output",
+        "threshold": 0.6
       }
-    },
-    {
-      "session_id": "sess-002",
-      "is_hallucination": true,
-      "confidence": 0.625,
-      "details": {
-        "score": "0.38"
-      }
-    },
-    {
-      "session_id": "sess-003",
-      "is_hallucination": true,
-      "confidence": 0.5,
-      "details": {
-        "score": "0.50"
-      }
-    }
-  ]
+    ]
+  }
 }

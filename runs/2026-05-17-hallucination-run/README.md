@@ -1,10 +1,12 @@
 # 2026-05-17 Hallucination Benchmark Run
 
 ## 개요
-- **목적:** 벤치마킹 스캐폴드에 포함된 환각(Hallucination) 탐지 파이프라인이 실제로 결과를 산출하는지 확인
+- **목적:** 환각(Hallucination) 탐지 파이프라인의 엔드투엔드 실행 검증
 - **데이터:** `benchmark/data/sample_sessions.jsonl` (3개 합성 세션)
+  - **메타:** `benchmark/data/metadata.sample.yaml` 참조
 - **모델 어댑터:** `EchoAdapter` (샘플용, 모델 API 호출 없음)
 - **탐지기:** `SimpleHallucinationDetector` (토큰 겹침 기반)
+- **벤치마킹 방법/메트릭:** [`benchmark/methodology/README.md`](../../benchmark/methodology/README.md#1-환각-탐지-hallucination)
 - **실행 커맨드:**
   ```bash
   cd benchmark
@@ -37,6 +39,7 @@
 ## 파일
 - `run.log` – 원본 CLI 출력
 - `artifacts/responses.jsonl` – **모든 세션의 프롬프트/모델 출력/탐지 결과** (대용량 데이터 보관용)
-- `README.md` (본 문서) – 경영진/실무자용 요약
+- `report.json` – 실행 요약/세션별 판정
+- `README.md` (본 문서) – 경영진/실무자용 요약, 메타데이터/방법론 링크 포함
 
 > **Note:** 이 실행 결과는 기능 검증용이므로 최종 산출물에는 포함하지 않고 필요 시 삭제 가능합니다.

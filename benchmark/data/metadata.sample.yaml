@@ -1,0 +1,16 @@
+dataset: sample_sessions
+version: v1
+rows: 3
+source: synthetic
+license: internal
+columns:
+  - name: session_id
+    type: string
+  - name: prompt
+    type: string
+  - name: reference_facts
+    type: list[string]
+  - name: model_assertions
+    type: list[string]
+notes:
+  - Minimal dataset bundled with repo for scaffold tests.
