@@ -1,0 +1,4 @@
+rs-001: OK (confidence=0.00, score=None)
+rs-002: FLAG (confidence=1.00, score=None)
+Processed 2 sessions; flagged=1
+Report saved to ../runs/2026-05-17-0600-echo-bundle/reasoning/report.json
