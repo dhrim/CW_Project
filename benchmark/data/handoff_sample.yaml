@@ -1,0 +1,11 @@
+dataset: handoff_sample
+version: v1
+rows: 2
+source: synthetic
+columns:
+  - session_id
+  - prompt
+  - required_slots
+  - delivered_slots
+notes:
+  - Used to validate handoff integrity detector.

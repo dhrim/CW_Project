@@ -1,0 +1,10 @@
+dataset: tool_failure_sample
+version: v1
+rows: 2
+source: synthetic
+columns:
+  - session_id
+  - prompt
+  - tool_calls
+notes:
+  - Illustrates tool failure counting detector.

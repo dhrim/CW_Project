@@ -18,6 +18,8 @@ python evaluation/run_benchmark.py data/sample_sessions.jsonl \
   --adapter models.base_adapter:EchoAdapter \
   --detector detectors.hallucination:SimpleHallucinationDetector \
   --detector-config '{"threshold": 0.6}' \
+  --dataset-meta benchmark/data/metadata.sample.yaml \
+  --methodology benchmark/methodology/README.md#1-환각-탐지-hallucination \
   --report ../runs/2026-05-17-hallucination-run/report.json
 ```
 
@@ -29,6 +31,8 @@ python evaluation/run_benchmark.py data/sample_sessions.jsonl \
 | `--detector module:Class` | 탐지기 클래스 지정 (환각/추론/도구 등). |
 | `--detector-config '{...}'` | 탐지기 설정(예: threshold, metric 토글). |
 | `--report path.json` | 실행 결과(요약+세션별 판정)를 JSON으로 저장. |
+| `--dataset-meta path` | 데이터셋 메타데이터(YAML/URL) 경로.
+| `--methodology ref` | 사용한 벤치마킹 방법/메트릭 문서 링크. |
 
 ## 데이터셋 추가 가이드
 - `benchmark/data/README.md`에 스키마/절차가 정리되어 있습니다.

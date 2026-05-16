@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, List, Type
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 
-from detectors.hallucination import DetectionResult  # type: ignore
+from detectors.base import DetectionResult
 
 
 def load_sessions(path: Path) -> Iterable[Dict[str, Any]]:
@@ -41,6 +41,8 @@ def main(
     adapter_cfg: Dict[str, Any],
     detector_cfg: Dict[str, Any],
     report_path: Path | None,
+    dataset_meta: str | None,
+    methodology_ref: str | None,
 ) -> None:
     AdapterCls = import_class(adapter_path)
     DetectorCls = import_class(detector_path)
@@ -49,34 +51,39 @@ def main(
     detector = DetectorCls(**detector_cfg)
 
     detections: List[DetectionResult] = []
-    total = hallucinations = 0
+    total = flagged = 0
+    metrics_used: set[str] = set()
 
     for session in load_sessions(data_path):
         total += 1
-        response = adapter.generate(session)
-        result = detector.detect(
-            session_id=response.session_id,
-            reference_facts=session.get("reference_facts", []),
-            model_output=response.output,
-        )
+        session_copy = dict(session)
+        response = adapter.generate(session_copy)
+        session_copy["model_output"] = response.output
+        result = detector.detect(session_copy)
         detections.append(result)
-        hallucinations += int(getattr(result, "is_hallucination", False))
-        status = "H" if getattr(result, "is_hallucination", False) else "OK"
-        score = result.details.get("score") if hasattr(result, "details") else "-"
+        flagged += int(result.is_flagged)
+        if result.metric:
+            metrics_used.add(result.metric)
+        score = result.details.get("score") if result.details else "-"
+        status = "FLAG" if result.is_flagged else "OK"
         print(
             f"{response.session_id}: {status} "
-            f"(confidence={getattr(result, 'confidence', 0):.2f}, score={score})"
+            f"(confidence={result.confidence:.2f}, score={score})"
         )
 
-    print(f"Processed {total} sessions; flagged={hallucinations}")
+    print(f"Processed {total} sessions; flagged={flagged}")
 
     if report_path:
         payload = {
             "summary": {
                 "total_sessions": total,
-                "flagged": hallucinations,
+                "flagged": flagged,
                 "adapter": adapter_path,
                 "detector": detector_path,
+                "dataset": str(data_path),
+                "dataset_metadata": dataset_meta,
+                "methodology": methodology_ref,
+                "metrics": sorted(metrics_used),
             },
             "detections": [result.__dict__ for result in detections],
         }
@@ -113,6 +120,16 @@ if __name__ == "__main__":
         type=Path,
         help="Optional path to save JSON report",
     )
+    parser.add_argument(
+        "--dataset-meta",
+        dest="dataset_meta",
+        help="Path or identifier for dataset metadata (YAML/URL)",
+    )
+    parser.add_argument(
+        "--methodology",
+        dest="methodology",
+        help="Reference link/file describing benchmark method",
+    )
     args = parser.parse_args()
     main(
         data_path=args.data_path,
@@ -121,4 +138,6 @@ if __name__ == "__main__":
         adapter_cfg=parse_json_arg(args.adapter_config),
         detector_cfg=parse_json_arg(args.detector_config),
         report_path=args.report,
+        dataset_meta=args.dataset_meta,
+        methodology_ref=args.methodology,
     )

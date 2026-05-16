@@ -1,15 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Dict, List
 
-
-@dataclass
-class DetectionResult:
-    session_id: str
-    is_hallucination: bool
-    confidence: float
-    details: Dict[str, str]
+from .base import DetectionResult
 
 
 class SimpleHallucinationDetector:
@@ -25,12 +18,16 @@ class SimpleHallucinationDetector:
             return 0.0
         return len(ref_tokens & output_tokens) / len(ref_tokens)
 
-    def detect(self, session_id: str, reference_facts: List[str], model_output: str) -> DetectionResult:
+    def detect(self, session: Dict[str, List[str]]) -> DetectionResult:
+        session_id = session.get("session_id", "unknown")
+        reference_facts = session.get("reference_facts", [])
+        model_output = session.get("model_output", "")
         score = self.score(reference_facts, model_output)
         is_hallucination = score < self.threshold
         return DetectionResult(
             session_id=session_id,
-            is_hallucination=is_hallucination,
+            is_flagged=is_hallucination,
             confidence=1 - score,
             details={"score": f"{score:.2f}"},
+            metric="token_overlap",
         )

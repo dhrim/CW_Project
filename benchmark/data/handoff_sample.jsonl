@@ -1,0 +1,2 @@
+{"session_id": "ho-001", "prompt": "Escalate billing issue.", "required_slots": ["account_id", "issue_summary"], "delivered_slots": ["account_id", "issue_summary"], "metadata": {"source": "synthetic"}}
+{"session_id": "ho-002", "prompt": "Handoff mortgage request to specialist.", "required_slots": ["customer_name", "loan_amount", "due_date"], "delivered_slots": ["customer_name", "due_date"], "metadata": {"source": "synthetic"}}

@@ -25,9 +25,19 @@
 
 ## 데이터셋 추가 절차
 1. `benchmark/data/<dataset-name>.jsonl` 파일 생성 후 위 스키마로 입력.
-2. (선택) `benchmark/data/<dataset-name>.yaml`에 메타데이터(출처, 라이선스, 태그)를 기록.
+2. `benchmark/data/<dataset-name>.yaml`에 메타데이터(출처, 라이선스, 태그, 행 수)를 기록.
 3. 추후 실행 시 `python evaluation/run_benchmark.py benchmark/data/<dataset-name>.jsonl ...` 형태로 지정.
 4. 대규모 데이터는 Git LFS 또는 외부 스토리지(S3 등)에 저장하고 경로만 커밋.
+
+## 샘플 데이터셋
+| 파일 | 용도 |
+| --- | --- |
+| `sample_sessions.jsonl` | 환각 검증용 (token overlap) |
+| `reasoning_sample.jsonl` | 제약 충족 검증 |
+| `tool_failure_sample.jsonl` | 도구 호출 실패 탐지 |
+| `handoff_sample.jsonl` | 핸드오프 슬롯 누락 탐지 |
+
+각 데이터셋에 대응하는 `.yaml` 메타 파일이 있으며, 보고서에서 경영진이 링크로 확인할 수 있도록 경로를 기재하세요.
 
 ## 벤치마크 대상/메트릭 확장
 - 환각 외에 추론 오류/도구 실패/hand-off를 측정하려면 추가 필드를 정의하고 해당 detector가 읽을 수 있도록 구현.

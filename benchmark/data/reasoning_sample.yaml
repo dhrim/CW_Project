@@ -1,0 +1,11 @@
+dataset: reasoning_sample
+version: v1
+rows: 2
+source: synthetic
+columns:
+  - session_id
+  - prompt
+  - required_constraints
+  - satisfied_constraints
+notes:
+  - Demonstrates constraint coverage metric for reasoning errors.

@@ -1,0 +1,2 @@
+{"session_id": "rs-001", "prompt": "Plan a 3-step recipe to boil pasta.", "required_constraints": ["boil_water", "add_pasta", "drain"], "satisfied_constraints": ["boil_water", "add_pasta", "drain"], "metadata": {"source": "synthetic"}}
+{"session_id": "rs-002", "prompt": "Outline a checklist for bug triage.", "required_constraints": ["reproduce_bug", "assign_owner", "set_priority"], "satisfied_constraints": ["reproduce_bug", "assign_owner"], "metadata": {"source": "synthetic"}}
